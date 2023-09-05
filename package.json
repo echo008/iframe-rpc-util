@@ -1,0 +1,29 @@
+{
+  "name": "iframe-rpc-util",
+  "version": "1.0.0",
+  "description": "RPC between cross-origin iframe using postMessage",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/iframe-rpc.umd.cjs",
+  "module": "./dist/iframe-rpc.js",
+  "exports": {
+    ".": {
+      "import": "./dist/iframe-rpc.js",
+      "require": "./dist/iframe-rpc.umd.cjs"
+    }
+  },
+  "scripts": {
+    "build": "vite build"
+  },
+  "keywords": [
+    "iframe",
+    "rpc",
+    "cross-origin",
+    "postmessage"
+  ],
+  "author": "echo008",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^4.4.9"
+  }
+}
