@@ -3,7 +3,9 @@
   "version": "1.0.3",
   "description": "RPC between cross-origin iframe using postMessage",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "src/main.ts",
   "browser": "./dist/iframe-rpc.umd.cjs",
   "module": "./dist/iframe-rpc.js",
@@ -33,6 +35,7 @@
   "author": "echo008",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^20.5.9",
     "vite": "^4.4.9"
   }
 }
