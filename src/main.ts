@@ -1,33 +1,61 @@
-const NOOP = () => {}
-const cb = () => `__${(Date.now()).toString(36)}`
+const NOOP = (): void => {}
+const cb = (): string => `__${(Date.now()).toString(36)}${Math.random().toString(36).slice(-6)}__`
+const filterCb = (name: string): boolean => name.length !== 18 || !name.startsWith('__') || !name.endsWith('__')
 
-const defaultConfig = {
+interface IframeConfig {
+  id?: string | HTMLIFrameElement
+  timeout: number,
+  origin: string
+}
+
+type ConfigParams = string | Object | undefined
+
+interface IframePromise {
+  resolve: any,
+  reject: any,
+  cb: string
+}
+
+interface IframeProxy {
+  [key: string]: Function | IframePromise
+}
+
+const defaultConfig: IframeConfig = {
   timeout: 3e3,
   origin: '*'
 }
 
-export default (config) => {
+export default (config: ConfigParams) => {
   const configData = typeof config === 'string' ? { id: config } : config
-  const options = Object.assign(defaultConfig, configData)
+  const options: IframeConfig = Object.assign(defaultConfig, configData)
 
   if (!options.id && window.self == window.top) {
     throw new Error('iframe is empty')
   }
-  let iframeNode: any = null
 
-  // parent window
+  let iframeNode: HTMLIFrameElement | null = null
+
+  const postMessage = (data, origin) => ((iframeNode ? iframeNode.contentWindow : window.top) as Window).postMessage(data, origin)
+  
+  const proxyMap: IframeProxy = {}
+
   if (options.id) {
-    iframeNode = typeof options.id === 'string' ? document.getElementById(options.id) : options.id
+    // parent window
+    iframeNode = (typeof options.id === 'string' ? document.getElementById(options.id) : options.id) as HTMLIFrameElement
     if (iframeNode.nodeName !== 'IFRAME' || !iframeNode.src) {
       throw new Error('iframe is must')
     }
     const iframeURL = new URL(iframeNode.src)
     options.origin = iframeURL.origin
+  } else {
+    // children window
+    Promise.resolve().then(() => {
+      postMessage({
+        __func: 'onInit',
+        data: Object.keys(proxyMap).filter(filterCb)
+      }, options.origin)
+    })
   }
-
-  const postMessage = (data, origin) => (iframeNode ? iframeNode.contentWindow : window.top).postMessage(data, origin)
-  
-  const proxyMap = {}
 
   // 监听信息通信
   window.addEventListener('message', async (event) => {
@@ -36,12 +64,14 @@ export default (config) => {
       // 被调用
       if (typeof proxyMap[__func] === 'function') {
         try {
-          const res = await proxyMap[__func](...data)
+          const res = await (proxyMap[__func] as Function)(...data)
           if (res instanceof Error) postMessage({ __func: __cb, error: res }, event.origin)
           else postMessage({ __func: __cb, data: res }, event.origin)
         } catch (err) {
           postMessage({ __func: __cb, error: err }, event.origin)
         }
+      } else if (__func === 'getKeys') {
+        postMessage({ __func: __cb, data: Object.keys(proxyMap).filter(filterCb) }, event.origin)
       } else {
         postMessage({ __func: __cb, error: new Error('function is null') }, event.origin)
       }
@@ -49,9 +79,11 @@ export default (config) => {
       // 调用后回调
       if (typeof proxyMap[__func] === 'object') {
         // 接受同域下回调
-        const { resolve, reject, cb } = proxyMap[__func]
+        const { resolve, reject, cb } = proxyMap[__func] as IframePromise
         error ? reject(error) : resolve(data)
         delete proxyMap[cb]
+      } else if (__func === 'onInit') {
+        (proxyMap[__func] as Function)(data)
       }
     }
   })

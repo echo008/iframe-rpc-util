@@ -1,6 +1,6 @@
 {
   "name": "iframe-rpc-util",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "RPC between cross-origin iframe using postMessage",
   "type": "module",
   "files": ["dist"],

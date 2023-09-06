@@ -29,22 +29,28 @@ import iframeRpc from 'iframe-rpc-util'
 // init rpc instance
 const iframeProxy = iframeRpc('iframeNode')
 
-// register function
-iframeProxy.parentFunc = (data) => {
-    // return remote data
-    return 'parent function'
-}
+// iframe init event
+iframeProxy.onInit = (data) => {
+    // get rpc register function
+    iframeProxy.getKeys().then((data) => {
+        console.log('parent getKeys', data)
+    })
 
-window.onload = () => {
     // call children function
     iframeProxy.childrenFunc('parent params').then((data) => {
         console.log('parent', data)
     })
 }
+
+// register function
+iframeProxy.parentFunc = (data) => {
+    // return remote data
+    return 'parent function'
+}
 ```
 
 
-### children Iframe
+### Children Iframe
 
 ```js
 import iframeRpc from 'iframe-rpc-util'
