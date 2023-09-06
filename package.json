@@ -1,6 +1,6 @@
 {
   "name": "iframe-rpc-util",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "RPC between cross-origin iframe using postMessage",
   "type": "module",
   "files": ["dist"],
@@ -15,6 +15,14 @@
   "scripts": {
     "build": "vite build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/echo008/iframe-rpc-util.git"
+  },
+  "bugs": {
+    "url": "https://github.com/echo008/iframe-rpc-util/issues"
+  },
+  "homepage": "https://github.com/echo008/iframe-rpc-util#readme",
   "keywords": [
     "iframe",
     "rpc",
