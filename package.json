@@ -4,7 +4,8 @@
   "description": "RPC between cross-origin iframe using postMessage",
   "type": "module",
   "files": ["dist"],
-  "main": "./dist/iframe-rpc.umd.cjs",
+  "main": "src/index.ts",
+  "browser": "./dist/iframe-rpc.umd.cjs",
   "module": "./dist/iframe-rpc.js",
   "exports": {
     ".": {
