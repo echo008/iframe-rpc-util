@@ -51,7 +51,7 @@ export default (config: ConfigParams) => {
     // children window
     Promise.resolve().then(() => {
       postMessage({
-        __func: 'onInit',
+        __func: 'onReady',
         data: Object.keys(proxyMap).filter(filterCb)
       }, options.origin)
     })
@@ -82,7 +82,7 @@ export default (config: ConfigParams) => {
         const { resolve, reject, cb } = proxyMap[__func] as IframePromise
         error ? reject(error) : resolve(data)
         delete proxyMap[cb]
-      } else if (__func === 'onInit') {
+      } else if (__func === 'onReady') {
         (proxyMap[__func] as Function)(data)
       }
     }

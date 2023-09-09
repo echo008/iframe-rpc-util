@@ -30,7 +30,7 @@ import iframeRpc from 'iframe-rpc-util'
 const iframeProxy = iframeRpc('iframeNode')
 
 // iframe init event
-iframeProxy.onInit = (data) => {
+iframeProxy.onReady = (data) => {
     // get rpc register function
     iframeProxy.getKeys().then((data) => {
         console.log('parent getKeys', data)
